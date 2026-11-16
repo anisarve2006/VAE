@@ -41,16 +41,17 @@ class DifferentiableSSIMLoss(nn.Module):
         img2 = (img2 + 1.0) / 2.0
 
         padd = self.window_size // 2
-        mu1 = F.conv2d(img1, self.window, padding=padd, groups=self.channels)
-        mu2 = F.conv2d(img2, self.window, padding=padd, groups=self.channels)
+        window = self.window.to(img1.device, dtype=img1.dtype)
+        mu1 = F.conv2d(img1, window, padding=padd, groups=self.channels)
+        mu2 = F.conv2d(img2, window, padding=padd, groups=self.channels)
 
         mu1_sq = mu1.pow(2)
         mu2_sq = mu2.pow(2)
         mu1_mu2 = mu1 * mu2
 
-        sigma1_sq = F.conv2d(img1 * img1, self.window, padding=padd, groups=self.channels) - mu1_sq
-        sigma2_sq = F.conv2d(img2 * img2, self.window, padding=padd, groups=self.channels) - mu2_sq
-        sigma12 = F.conv2d(img1 * img2, self.window, padding=padd, groups=self.channels) - mu1_mu2
+        sigma1_sq = F.conv2d(img1 * img1, window, padding=padd, groups=self.channels) - mu1_sq
+        sigma2_sq = F.conv2d(img2 * img2, window, padding=padd, groups=self.channels) - mu2_sq
+        sigma12 = F.conv2d(img1 * img2, window, padding=padd, groups=self.channels) - mu1_mu2
 
         c1 = 0.01 ** 2
         c2 = 0.03 ** 2

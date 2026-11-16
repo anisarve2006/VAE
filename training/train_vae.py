@@ -1,6 +1,11 @@
 import os
+import sys
 import argparse
 import yaml
+
+# Ensure project root is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -43,8 +48,8 @@ class VAETrainer(BaseTrainer):
         )
 
         # Losses
-        self.rec_loss = ReconstructionLoss(loss_type=t_cfg.get("rec_loss_type", "l1_ssim"))
-        self.kl_loss = KLDivergenceLoss(free_bits=t_cfg.get("kl_free_bits", 0.1))
+        self.rec_loss = ReconstructionLoss(loss_type=t_cfg.get("rec_loss_type", "l1_ssim")).to(self.device)
+        self.kl_loss = KLDivergenceLoss(free_bits=t_cfg.get("kl_free_bits", 0.1)).to(self.device)
         self.scheduler = AnnealingScheduler(
             total_epochs=t_cfg.get("epochs", 50),
             warmup_epochs=t_cfg.get("kl_anneal_epochs", 10),

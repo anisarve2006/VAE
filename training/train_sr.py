@@ -1,6 +1,11 @@
 import os
+import sys
 import argparse
 import yaml
+
+# Ensure project root is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
@@ -55,10 +60,10 @@ class SRTrainer(BaseTrainer):
         self.lambda_adv = l_cfg.get("lambda_adv", 0.05)
         self.lambda_kl = l_cfg.get("lambda_kl", 0.01)
 
-        self.pixel_criterion = ReconstructionLoss(loss_type="charbonnier")
-        self.perc_criterion = VGGPerceptualLoss()
-        self.adv_criterion = AdversarialLoss(loss_type="relativistic")
-        self.kl_criterion = KLDivergenceLoss()
+        self.pixel_criterion = ReconstructionLoss(loss_type="charbonnier").to(self.device)
+        self.perc_criterion = VGGPerceptualLoss().to(self.device)
+        self.adv_criterion = AdversarialLoss(loss_type="relativistic").to(self.device)
+        self.kl_criterion = KLDivergenceLoss().to(self.device)
 
     def train_epoch(self, dataloader: DataLoader, epoch: int) -> dict:
         self.model.train()

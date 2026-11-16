@@ -41,6 +41,10 @@ class VGGPerceptualLoss(nn.Module):
         return (x_01 - self.mean) / self.std
 
     def forward(self, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        # Ensure VGG module is on the same device as inputs
+        if self.slices[0][0].weight.device != pred.device:
+            self.to(pred.device)
+
         pred_norm = self.normalize(pred)
         target_norm = self.normalize(target)
 

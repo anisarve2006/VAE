@@ -1,6 +1,11 @@
 import os
+import sys
 import argparse
 import yaml
+
+# Ensure project root is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -55,7 +60,7 @@ class HybridTrainer(BaseTrainer):
             lambda_perc=l_cfg.get("lambda_perc", 0.1),
             adv_loss_type=t_cfg.get("adv_loss_type", "hinge"),
             kl_free_bits=t_cfg.get("kl_free_bits", 0.05)
-        )
+        ).to(self.device)
 
         self.scheduler = AnnealingScheduler(
             total_epochs=t_cfg.get("epochs", 60),
