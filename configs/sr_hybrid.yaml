@@ -1,0 +1,37 @@
+experiment_name: "vae_srgan_hybrid"
+seed: 42
+
+data:
+  dataset: "paired_sr"
+  data_dir: "./data/raw/sr"
+  scale_factor: 4
+  crop_size: 128            # HR crop size (LR will be 32x32)
+  batch_size: 16
+  num_workers: 2
+
+model:
+  type: "vae_srgan"
+  scale_factor: 4
+  in_channels: 3
+  out_channels: 3
+  latent_dim: 64
+  num_rrdb_blocks: 8
+  base_channels: 64
+
+loss_weights:
+  lambda_pixel: 10.0        # L1 pixel reconstruction loss
+  lambda_perc: 1.0          # VGG perceptual loss
+  lambda_adv: 0.05          # Relativistic / Hinge adversarial loss
+  lambda_kl: 0.01           # VAE latent regularization for structural consistency
+
+training:
+  epochs: 80
+  lr_generator: 0.0001
+  lr_discriminator: 0.0001
+  beta1: 0.9
+  beta2: 0.999
+  grad_clip_norm: 5.0
+  save_interval: 10
+  sample_interval: 5
+  checkpoint_dir: "./checkpoints/sr"
+  output_dir: "./outputs/sr"

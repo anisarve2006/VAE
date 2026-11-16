@@ -1,0 +1,33 @@
+experiment_name: "gan_cifar10_baseline"
+seed: 42
+
+data:
+  dataset: "cifar10"
+  data_dir: "./data/raw"
+  image_size: 32
+  channels: 3
+  num_classes: 10
+  batch_size: 128
+  num_workers: 2
+
+model:
+  type: "cgan"
+  latent_dim: 128
+  base_channels: 64
+  channel_multipliers: [1, 2, 4]
+  condition_dim: 10
+  discriminator_type: "projection"
+
+training:
+  epochs: 50
+  lr_generator: 0.0002
+  lr_discriminator: 0.0002
+  beta1: 0.0
+  beta2: 0.99
+  adv_loss_type: "hinge"
+  d_steps_per_g_step: 1
+  grad_clip_norm: 5.0
+  save_interval: 10
+  sample_interval: 5
+  checkpoint_dir: "./checkpoints/gan"
+  output_dir: "./outputs/gan"

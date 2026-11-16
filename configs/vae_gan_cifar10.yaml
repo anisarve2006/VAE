@@ -1,0 +1,43 @@
+experiment_name: "vae_gan_hybrid_cifar10"
+seed: 42
+
+data:
+  dataset: "cifar10"
+  data_dir: "./data/raw"
+  image_size: 32
+  channels: 3
+  num_classes: 10
+  batch_size: 128
+  num_workers: 2
+
+model:
+  type: "conditional_vae_gan"
+  latent_dim: 128
+  base_channels: 64
+  channel_multipliers: [1, 2, 4]
+  num_res_blocks: 2
+  condition_dim: 10
+  discriminator_type: "projection"
+
+loss_weights:
+  lambda_rec: 10.0          # Pixel reconstruction loss (L1)
+  lambda_kl: 1.0            # Latent KL divergence regularizer
+  lambda_adv: 1.0           # Adversarial fool loss for G
+  lambda_fm: 5.0            # Feature matching loss from discriminator layers
+  lambda_perc: 0.1          # VGG perceptual loss
+
+training:
+  epochs: 60
+  lr_encoder: 0.0002
+  lr_generator: 0.0002
+  lr_discriminator: 0.0001
+  beta1: 0.5
+  beta2: 0.999
+  adv_loss_type: "hinge"    # "hinge", "bce", or "relativistic"
+  kl_anneal_epochs: 10
+  kl_free_bits: 0.05
+  grad_clip_norm: 5.0
+  save_interval: 10
+  sample_interval: 5
+  checkpoint_dir: "./checkpoints/hybrid"
+  output_dir: "./outputs/hybrid"

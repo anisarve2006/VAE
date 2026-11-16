@@ -1,0 +1,36 @@
+experiment_name: "vae_cifar10_baseline"
+seed: 42
+
+data:
+  dataset: "cifar10"
+  data_dir: "./data/raw"
+  image_size: 32
+  channels: 3
+  num_classes: 10
+  batch_size: 128
+  num_workers: 2
+
+model:
+  type: "cvae"
+  latent_dim: 128
+  base_channels: 64
+  channel_multipliers: [1, 2, 4]
+  num_res_blocks: 2
+  condition_dim: 10
+
+training:
+  epochs: 50
+  lr_encoder: 0.0002
+  lr_decoder: 0.0002
+  beta1: 0.5
+  beta2: 0.999
+  weight_decay: 1e-5
+  kl_weight: 1.0
+  kl_anneal_epochs: 10
+  kl_free_bits: 0.1
+  rec_loss_type: "l1_ssim"
+  grad_clip_norm: 5.0
+  save_interval: 10
+  sample_interval: 5
+  checkpoint_dir: "./checkpoints/vae"
+  output_dir: "./outputs/vae"
